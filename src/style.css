@@ -3,12 +3,12 @@
 }
 
 :root {
-    --primary: #556B2F;
-    --secondary: #DEB887;
+    --primary: #5d6491;
+    --secondary: #aeb1c8;
 }
 
 body {
-    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-family: san serif;
 }
 #jumbotron {
     background-color: var(--primary);

@@ -1,80 +1,156 @@
-const fs = require('fs');
-const path = require('path');
-const inquirer = require('inquirer');
+const fs = require("fs");
+const inquirer = require("inquirer");
+const path = require("path");
+const generateHTML = require('./src/generateHTML');
+const Manager = require("./lib/Manager");
+const Engineer = require("./lib/Engineer");
+const Intern = require("./lib/Intern");
 
-const addEmployee = () => {
-    return inquirer.prompt([
-        {
-            type: 'input',
-            name: 'managerName',
-            message: "What is your team manager's name?"  
-        },
-        {
-            type: 'input',
-            name: 'managerId',
-            message: "What is your manager's ID?"
-        },
-        {
-            type: 'input',
-            name: 'managerEmail',
-            message: "What is your manager's email address?"
-        },
-        {
-            type: 'input',
-            name: 'officeNumber',
-            message: "What is your manager's office number?"    
-        },
-        {
-            type: 'list',
-            name: 'role',
-            message: "Please pick employee position:",
-            choices: ['Engineer', 'Intern']
-        },
-        {
-            type: 'input',
-            name: 'employeeName',
-            message: "What is your employee's name?"
-        },
-        {
-            type: 'input',
-            name: 'employeeID',
-            message: "What is your employee's ID?"
-        },
-        {
-            type: 'input',
-            name: 'employeeEmail',
-            message: "What is your employee's email address?"
-        },
-        {
-            type: 'input',
-            name: 'github', 
-            message: "What is your employee's gitHub username?",
-            when: (input) => input.role === 'Engineer',
-        },
-        {
-            type: 'input',
-            name: 'school',
-            message: "Please enter intern's school:",
-            when: (input) => input.role === 'Intern'
-        },
-        {
-            type: 'confirm',
-            name: 'confirmAdd',
-            message: 'Would you like to add additional teammates?',
-            default: false
-        }
-    ])
-    .then(teamInfo => {
-        let { name, id, email, role, github, school, confirmAdd } = teamInfo;
-        let employee;
+const teamArray = []
 
-        if (role === 'Engineer') {
-            employee = new Engineer (employeeName, employeeID, employeeEmail, github);
-            console.log(employee);                                
-        } else if (role === 'Intern') {
-            employee = new Intern (employeeName, employeeID, employeeEmail, school);
-            console.log(employee);           
-        }
+function addManager() {
+  inquirer.prompt([
+    {
+      type: 'input',
+      name: "managerName",
+      message: "What is the manager's name?"
+    },
+    {
+      type: 'input',
+      name: "managerId",
+      message: "What is the Manager's ID?"
+    },
+    {
+      type: 'input',
+      name: "managerEmail",
+      message: "What is the manager's email?"
+    },
+    {
+      type: 'input',
+      name: "managerGithub",
+      message: "What is the manager's Office?"
+    },
+  ]).then((managerResponse) => {
+    const name = managerResponse.managerName
+    const id = managerResponse.managerId
+    const email = managerResponse.managerEmail
+    const github = managerResponse.managerGithub
+    const manager = new Manager(name, id, email, github)
+      teamArray.push(manager)
 
+    buildTeam()
+  });
+};
+
+function buildTeam(){
+  inquirer.prompt([
+    {
+      type: 'list',
+      name: "role",
+      message: "Who would you like to add?",
+      choices:[ 
+        "Engineer", 
+        "Intern", 
+        "I'm done"
+      ]
+    }
+  ]).then((data)=>{
+    switch(data.role){
+      case "Engineer":
+        addEngineer();
+      break;
+      case "Intern":
+        addIntern();
+      break;
+      default:
+        createHtml()
+    }
+  })
+}
+
+function addEngineer() {
+  inquirer.prompt([
+    {
+      type: 'input',
+      name: "engineerName",
+      message: "What is the engineer's name?"
+    },
+    {
+      type: 'input',
+      name: "engineerId",
+      message: "What is the engineer's ID?"
+    },
+    {
+      type: 'input',
+      name: "engineerEmail",
+      message: "What is the engineer's email?"
+    },
+    {
+      type: 'input',
+      name: "engineerGithub",
+      message: "What is the engineer's GitHub?"
+    },
+  ]).then((engineerResponse) => {
+    const name = engineerResponse.engineerName
+    const id = engineerResponse.engineerId
+    const email = engineerResponse.engineerEmail
+    const github = engineerResponse.engineerGithub
+    const engineer = new Engineer(name, id, email, github)
+      teamArray.push(engineer)
+      
+      buildTeam()
+  });
+};
+
+function addIntern() {
+  inquirer.prompt([
+    {
+      type: 'input',
+      name: "internName",
+      message: "What is the intern's name?"
+    },
+    {
+      type: 'input',
+      name: "internId",
+      message: "What is the intern's ID?"
+    },
+    {
+      type: 'input',
+      name: "internEmail",
+      message: "What is the intern's email?"
+    },
+    {
+      type: 'input',
+      name: "internSchool",
+      message: "What is the intern's school?"
+    },
+  ]).then((internResponse) => {
+    const name = internResponse.internName
+    const id = internResponse.internId
+    const email = internResponse.internEmail
+    const school = internResponse.internSchool
+    const intern = new Intern(name, id, email, school)
+      teamArray.push(intern)
+
+      buildTeam()
+  });
+};
+
+function writeToFile(fileName, data) {
+  fs.writeFileSync(path.join(process.cwd(), fileName), data);
+}
+
+function createHtml(){
+  generateHTML(teamArray);
+  console.log(teamArray);
+  
+  fs.writeFile('teamprofile.html', data, (err) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log("Your team profile has been successfully created! Please check out the index.html")
+      }
     })
 };
+
+addManager();
