@@ -1,24 +1,22 @@
-//generate manager card
 function generateMgr(manager) {
     return `
-    <div class="col-3">
+    <div class="col-5">
       <div class="card">
           <div class="card-body">
               <h5 class="card-title">${manager.name}</h5>
               <h6 class="card-subtitle mb-2 text-muted">Manager</h6>
               <p class="card-text">ID: ${manager.id}</p>
               <p class="card-text"><a href="mailto:${manager.email}">${manager.email}</a></p>
-              <a href="https://github.com/${manager.github}" class="card-link">${manager.name}'s Github</a></a>
+              <p" class="card-link">Office: ${manager.office}</p>
           </div>
       </div>
     </div>
     `
   };
   
-  //generate engineer card
   function generateEng(engineer) {
     return `
-    <div class="col-3">
+    <div class="col-5">
       <div class="card">
           <div class="card-body">
               <h5 class="card-title">${engineer.name}</h5>
@@ -32,10 +30,9 @@ function generateMgr(manager) {
     `
   };
   
-  //generate intern card
   function generateInt(intern){
     return `
-    <div class="col-3">
+    <div class="col-5">
       <div class="card">
           <div class="card-body">
               <h5 class="card-title">${intern.name}</h5>
@@ -49,10 +46,7 @@ function generateMgr(manager) {
     `
   };
   
-  
-  // push array to page 
   generateHTML = (data) => {
-    // array of employee card HTML
     cardArray = []; 
   
     for (let i = 0; i < data.length; i++) {
@@ -74,15 +68,12 @@ function generateMgr(manager) {
         cardArray.push(internCard);
       }
     }
-      //combines HTML code for cards together and converts to a string 
       let employeeCards = cardArray.join('')
   
-      // return to generated page
       generatePage(employeeCards); 
       console.log("just ran generatePage with employeeCards")
   };
   
-  //putting all the cards' HTML into the page HTML
   function generatePage(employeeCards){
     return `
     <!DOCTYPE html>
@@ -108,6 +99,5 @@ function generateMgr(manager) {
     </html>
     `;
   };
-  
   
   module.exports = generateHTML;
